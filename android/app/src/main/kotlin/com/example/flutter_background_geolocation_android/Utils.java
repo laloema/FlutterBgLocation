@@ -42,6 +42,11 @@ class Utils {
                 "(" + location.getLatitude() + ", " + location.getLongitude() + ")";
     }
 
+    static String getLocationText2(String res) {
+        return res == null ? "Unknown location" :
+                "(" + res + ")";
+    }
+
     static String getLocationTitle(Context context) {
         return "Estamos: " +
                 DateFormat.getDateTimeInstance().format(new Date());

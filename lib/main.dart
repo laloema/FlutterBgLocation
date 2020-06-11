@@ -86,14 +86,11 @@ class _HomePageState extends State<HomePage> {
         points.clear();
       } else {
         points = <LatLng>[
-          new LatLng(-22.849477, -47.160276),
-          new LatLng(-22.849744, -47.159847),
-          new LatLng(-22.852884, -47.155100),
-          new LatLng(-22.854505, -47.152386),
-          new LatLng(-22.857330, -47.145885),
+          new LatLng(19.2553189, -103.7358341)
         ];
       }
       while (i < locations.length) {
+
         points.add(new LatLng(double.parse(locations[i]['lat']),
             double.parse(locations[i]['lon'])));
         i++;
@@ -121,7 +118,7 @@ class _HomePageState extends State<HomePage> {
         height: double.maxFinite,
         child: FlutterMap(
           options: MapOptions(
-            center: LatLng(-22.848923, -47.161038),
+            center: LatLng(19.2553067, -103.7358341),
             zoom: 13.0,
           ),
           layers: [

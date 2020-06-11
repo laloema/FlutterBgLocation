@@ -33,6 +33,13 @@ import io.flutter.embedding.engine.FlutterEngine;
 import io.flutter.embedding.engine.dart.DartExecutor;
 import io.flutter.plugin.common.MethodChannel;
 
+import java.io.IOException;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.io.Reader;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 /**
  * A bound and started service that is promoted to a foreground service when location updates have
  * been requested and all clients unbind.
@@ -70,7 +77,7 @@ public class LocationUpdatesService extends Service {
     /**
      * The desired interval for location updates. Inexact. Updates may be more or less frequent.
      */
-    private static final long UPDATE_INTERVAL_IN_MILLISECONDS = 20000;
+    private static final long UPDATE_INTERVAL_IN_MILLISECONDS = 30000;
 
     /**
      * The fastest rate for active location updates. Updates will never be more frequent
@@ -114,6 +121,8 @@ public class LocationUpdatesService extends Service {
      * The current location.
      */
     private Location mLocation;
+
+    private String mHttpString;
 
     Context context;
 
@@ -272,7 +281,8 @@ public class LocationUpdatesService extends Service {
     private Notification getNotification() {
         Intent intent = new Intent(this, LocationUpdatesService.class);
 
-        CharSequence text = Utils.getLocationText(mLocation);
+        //CharSequence text = Utils.getLocationText(mLocation);
+        CharSequence text = Utils.getLocationText2(mHttpString);
 
         // Extra to help us figure out if we arrived in onStartCommand via the notification or not.
         intent.putExtra(EXTRA_STARTED_FROM_NOTIFICATION, true);
@@ -324,8 +334,9 @@ public class LocationUpdatesService extends Service {
 
     private void onNewLocation(Location location) {
         Log.i(TAG, "New location: " + location);
-
+        postData();
         mLocation = location;
+        //mHttpString = res;
         channel.invokeMethod("callbackLocation", location.getLatitude() + "," + location.getLongitude() + "," + location.getSpeed() + "," + serviceIsRunningInForeground(this));
 
         // Notify anyone listening for broadcasts about the new location.
@@ -338,6 +349,45 @@ public class LocationUpdatesService extends Service {
             mNotificationManager.notify(NOTIFICATION_ID, getNotification());
         }
     }
+
+    
+    public void postData() {
+        Log.i(TAG, "Post");
+        GetMethodDemo conexion = new GetMethodDemo();
+        try {
+            String res = conexion.execute("").get();
+            System.out.println("REspuesta::"+res);
+            mHttpString = res;
+        } catch (Exception e) {
+            System.out.println("error::"+e);
+        }
+        
+    //     URL url;
+    // HttpURLConnection urlConnection = null;
+    // try {
+    //     url = new URL("https://jsonplaceholder.typicode.com/posts/1');");
+
+    //     urlConnection = (HttpURLConnection) url
+    //             .openConnection();
+
+    //     InputStream in = urlConnection.getInputStream();
+
+    //     InputStreamReader isw = new InputStreamReader(in);
+
+    //     int data = isw.read();
+    //     while (data != -1) {
+    //         char current = (char) data;
+    //         data = isw.read();
+    //         System.out.print(current);
+    //     }
+    // } catch (Exception e) {
+    //     e.printStackTrace();
+    // } finally {
+    //     if (urlConnection != null) {
+    //         urlConnection.disconnect();
+    //     }    
+    // }
+    } 
 
     /**
      * Sets the location request parameters.
